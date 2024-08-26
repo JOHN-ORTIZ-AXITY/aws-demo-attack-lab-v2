@@ -36,43 +36,43 @@ stages:
               provider: 'aws'
               command: 'validate'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
-    # - stage: iac_scan
-    #   condition: always()
-    #   displayName: Code Scan
-    #   dependsOn: iac_validation
-    #   jobs:
-    #     - job: security_gate
-    #       displayName:  Checkov Scanning
-    #       steps:
-    #       - task: UsePythonVersion@0
-    #         displayName: Instalacion Python
-    #         inputs:
-    #           versionSpec: '3.8'
-    #       - script: pip install checkov
-    #         displayName: Instalacion Checkov
-    #       - script: |
-    #           checkov --prisma-api-url $(PRISMA_CONSOLE) --bc-api-key $(PRISMA_TOKEN) -d . --repo-id $(System.TeamProject)/$(Build.Repository.Name) --branch $(Build.SourceBranchName) --use-enforcement-rules --compact --quiet
-    #         displayName: Escaneo IaC
-    # - stage: serverless_scan
-    #   displayName: Serverless Scan (Prisma)
-    #   jobs:
-    #     - job: Scan
-    #       displayName: Serverless Scan (Prisma)
-    #       steps:
-    #       - script: zip $(serverlessFile).zip file $(serverlessFile).py
-    #         displayName: Zip File
-    #       - task: PrismaCloud.build-release-task.custom-build-release-task.prisma-cloud-compute-scan@3
-    #         displayName: ServerlessScan
-    #         inputs:
-    #           scanType: 'serverless'
-    #           twistlockService: '$(scPrismaCloudConsole)'
-    #           artifact: '$(serverlessFile).zip'
-    #       - task: PrismaCloud.build-release-task.custom-build-release-task.prisma-cloud-compute-scan@3
-    #         displayName: ServerlessScan (Node)
-    #         inputs:
-    #           scanType: 'serverless'
-    #           twistlockService: '$(scPrismaCloudConsole)'
-    #           artifact: 'serverless/nodejs-lambda-sample.zip'
+    - stage: iac_scan
+      condition: always()
+      displayName: Code Scan
+      dependsOn: iac_validation
+      jobs:
+        - job: security_gate
+          displayName:  Checkov Scanning
+          steps:
+          - task: UsePythonVersion@0
+            displayName: Instalacion Python
+            inputs:
+              versionSpec: '3.8'
+          - script: pip install checkov
+            displayName: Instalacion Checkov
+          - script: |
+              checkov --prisma-api-url $(PRISMA_CONSOLE) --bc-api-key $(PRISMA_TOKEN) -d . --repo-id $(System.TeamProject)/$(Build.Repository.Name) --branch $(Build.SourceBranchName) --use-enforcement-rules --compact --quiet
+            displayName: Escaneo IaC
+    - stage: serverless_scan
+      displayName: Serverless Scan (Prisma)
+      jobs:
+        - job: Scan
+          displayName: Serverless Scan (Prisma)
+          steps:
+          - script: zip $(serverlessFile).zip file $(serverlessFile).py
+            displayName: Zip File
+          - task: PrismaCloud.build-release-task.custom-build-release-task.prisma-cloud-compute-scan@3
+            displayName: ServerlessScan
+            inputs:
+              scanType: 'serverless'
+              twistlockService: '$(scPrismaCloudConsole)'
+              artifact: '$(serverlessFile).zip'
+          - task: PrismaCloud.build-release-task.custom-build-release-task.prisma-cloud-compute-scan@3
+            displayName: ServerlessScan (Node)
+            inputs:
+              scanType: 'serverless'
+              twistlockService: '$(scPrismaCloudConsole)'
+              artifact: 'serverless/nodejs-lambda-sample.zip'
         # - job: sonar_scanning
         #   displayName:  SonarQube Scanning
         #   steps:
@@ -118,10 +118,10 @@ stages:
         #       pollingTimeoutSec: '120'
     - stage: iac_deploy
       displayName: IaC Deploy
-      # dependsOn: 
-      #   - serverless_scan
-      #   - iac_validation
-      #   - iac_scan
+      dependsOn: 
+        - serverless_scan
+        - iac_validation
+        - iac_scan
       jobs:
         - job: iac_deploy
           displayName:  Terraform Apply
@@ -189,7 +189,7 @@ stages:
           - task: Docker@2
             displayName: dockerBuild
             inputs:
-              containerRegistry: 29c5a2ee-3cf2-453f-bc6c-af40c852272e
+              containerRegistry: $(containerregistry)
               repository: $(imageName)
               command: build
               Dockerfile: '$(appPath)/Dockerfile'
