@@ -10,7 +10,9 @@ pool:
   
 variables:
   - group: aws-demo-attack-lab-v2
-  
+
+lockBehavior: sequential
+
 stages:
     - stage: iac_validation
       condition: always()
@@ -124,7 +126,7 @@ stages:
         - iac_scan
       jobs:
         - job: iac_deploy
-          displayName:  Terraform Apply
+          displayName:  Terraform Init
           steps:
           - task: TerraformTaskV4@4
             displayName: Terraform Init
@@ -189,7 +191,7 @@ stages:
           - task: Docker@2
             displayName: dockerBuild
             inputs:
-              containerRegistry: $(containerregistry)
+              containerRegistry: $(containerRegistry)
               repository: $(imageName)
               command: build
               Dockerfile: '$(appPath)/Dockerfile'
@@ -246,7 +248,7 @@ stages:
           - task: Docker@2
             displayName: dockerPush
             inputs:
-              containerRegistry: 29c5a2ee-3cf2-453f-bc6c-af40c852272e
+              containerRegistry: $(containerRegistry)
               repository: $(imageName)
               command: push
               tags: $(imageTag)
