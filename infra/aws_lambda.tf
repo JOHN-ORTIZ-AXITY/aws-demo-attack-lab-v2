@@ -31,7 +31,7 @@ resource "aws_lambda_function" "analysis_lambda" {
 
   environment {
     variables = {
-      access_key = "AKIAIOSFODNN7EXAMPLE"
+      access_key = "AKIAIOSFODNN7EXAMPLE1"
       secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     }
   }
