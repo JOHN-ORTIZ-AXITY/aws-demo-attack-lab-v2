@@ -69,8 +69,4 @@ resource "aws_lambda_function" "analysis_lambda" {
   }
 }
 
-# Random string resource to generate unique id for resources
-resource "random_string" "unique_id" {
-  length  = 8
-  special = false
-}
+
