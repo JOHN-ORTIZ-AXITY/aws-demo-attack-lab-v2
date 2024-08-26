@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "checkov_lambda" {
-  filename         = "s3://your-s3-bucket/lambda_function_payload.zip"
+  filename         = "s3://your-s3-bucket/johnortizlab"
   function_name    = "checkov_lambda"
   role             = aws_iam_role.lambda_execution_role.arn
   handler          = "lambda_function_payload.lambda_handler"
