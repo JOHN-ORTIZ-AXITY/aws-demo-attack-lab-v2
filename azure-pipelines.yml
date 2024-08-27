@@ -32,11 +32,11 @@ stages:
               backendAWSBucketName: '$(backendAWSBucketName)'
               backendAWSKey: '$(backendAWSKey)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
-          - task: TerraformTaskV4@4
+          - task: validate #Se cambia TerraformTaskV4@4 por destroy para eliminar todo 
             displayName: Terraform Validate
             inputs:
-              provider: 'aws'
-              command: 'validate'
+              provider: 'aws' 
+              command: 'destroy' #Se cambia validatepor destroy para eliminar todo 
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
     # - stage: iac_scan
     #   condition: always()
