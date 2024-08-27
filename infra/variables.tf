@@ -11,7 +11,7 @@ variable "region" {
 }
 
 variable "deployment_name" {
-  default = "john-eks"
+  default = "johnortiz-eks"
 }
 
 variable "security_namespace" {
