@@ -12,7 +12,6 @@ variables:
   - group: aws-demo-attack-lab-v2
 
 lockBehavior: sequential
-
 stages:
     - stage: iac_validation
       condition: always()
@@ -31,15 +30,43 @@ stages:
               backendServiceAWS: '$(backendServiceAWS)'
               backendAWSBucketName: '$(backendAWSBucketName)'
               backendAWSKey: '$(backendAWSKey)'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
-#Se cambia validate por destroy para eliminar todo               
-          - task: TerraformTaskV4@4 
-            displayName: Terraform Validate
+              workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)' 
+          - task: TerraformTaskV4@4
+            displayName: Terraform Apply
             inputs:
-              provider: 'aws' 
-#Se cambia validatepor destroy para eliminar todo
-              command: 'destroy'  
+              provider: 'aws'
+              command: 'apply'
+              environmentServiceNameAWS: '$(backendServiceAWS)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
+              commandOptions: '-refresh=false'
+
+
+
+# stages:
+#     - stage: iac_validation
+#       condition: always()
+#       displayName: IaC Validate
+#       jobs:
+#         - job: iac_validation
+#           displayName:  IaC Validation
+#           steps:
+#           - bash: env
+#             displayName: Display Environment Variables
+#           - task: TerraformTaskV4@4
+#             displayName: Terraform Init
+#             inputs:
+#               provider: 'aws'
+#               command: 'init'
+#               backendServiceAWS: '$(backendServiceAWS)'
+#               backendAWSBucketName: '$(backendAWSBucketName)'
+#               backendAWSKey: '$(backendAWSKey)'
+#               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
+#           - task: TerraformTaskV4@4 
+#             displayName: Terraform Validate
+#             inputs:
+#               provider: 'aws' 
+#               command: 'validate' 
+#               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
     # - stage: iac_scan
     #   condition: always()
     #   displayName: Code Scan
