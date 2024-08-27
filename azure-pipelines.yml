@@ -298,7 +298,7 @@ stages:
           - bash: |
               if [[ $(kubectl get ns | grep prismacloud | awk '{print $1}') != 'prismacloud' ]]
               then
-                kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/daemonset.yaml && kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/webhook.yaml
+                kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/daemonset.yaml
               else
                 echo "Prisma Cloud Namespace already exists, not deploying again!"
               fi
