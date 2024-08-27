@@ -29,7 +29,7 @@ stages:
               provider: 'aws'
               command: 'init'
               backendServiceAWS: '$(backendServiceAWS)'
-              backendAWSBucketName: '$(projectName)'
+              backendAWSBucketName: '$(backendAWSBucketName)'
               backendAWSKey: '$(backendAWSKey)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
           - task: TerraformTaskV4@4
@@ -134,7 +134,7 @@ stages:
               provider: 'aws'
               command: 'init'
               backendServiceAWS: '$(backendServiceAWS)'
-              backendAWSBucketName: '$(projectName)'
+              backendAWSBucketName: '$(backendAWSBucketName)'
               backendAWSKey: '$(backendAWSKey)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
           - task: TerraformTaskV4@4
