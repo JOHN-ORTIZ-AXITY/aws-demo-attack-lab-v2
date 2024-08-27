@@ -23,14 +23,13 @@ stages:
           steps:
           - bash: env
             displayName: Display Environment Variables
-          
           - task: TerraformTaskV4@4
             displayName: Terraform Init
             inputs:
               provider: 'aws'
               command: 'init'
               backendServiceAWS: '$(backendServiceAWS)'
-              backendAWSBucketName: '$(backendAWSBucketName)'
+              backendAWSBucketName: '$(projectName)'
               backendAWSKey: '$(backendAWSKey)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
           - task: TerraformTaskV4@4
@@ -135,7 +134,7 @@ stages:
               provider: 'aws'
               command: 'init'
               backendServiceAWS: '$(backendServiceAWS)'
-              backendAWSBucketName: '$(backendAWSBucketName)'
+              backendAWSBucketName: '$(projectName)'
               backendAWSKey: '$(backendAWSKey)'
               workingDirectory: '$(System.DefaultWorkingDirectory)/$(infraPath)'
           - task: TerraformTaskV4@4
