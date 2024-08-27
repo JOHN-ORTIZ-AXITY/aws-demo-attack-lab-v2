@@ -23,6 +23,7 @@ stages:
           steps:
           - bash: env
             displayName: Display Environment Variables
+          
           - task: TerraformTaskV4@4
             displayName: Terraform Init
             inputs:
