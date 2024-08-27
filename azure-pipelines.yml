@@ -252,35 +252,39 @@ stages:
               repository: $(imageName)
               command: push
               tags: $(imageTag)
-    - stage: app_deployment
+- stage: app_deployment
+  displayName: Application Deploy
+  dependsOn: 
+    - iac_deploy
+    - docker_push
+  condition: always()
+  variables:
+    - name: clusterName
+      value: $[stageDependencies.iac_deploy.iac_deploy.outputs['terraformVariables.clusterName']]
+  jobs:
+    - job: app_deployment
       displayName: Application Deploy
-      dependsOn: 
-        - iac_deploy
-        - docker_push
-      condition: always()
-      variables:
-            - name: clusterName
-              value: $[stageDependencies.iac_deploy.iac_deploy.outputs['terraformVariables.clusterName']]
-      jobs:
-        - job: app_deployment
-          displayName: Application Deploy
-          steps:
-          - bash: aws eks update-kubeconfig --name $(clusterName)
-            displayName: "Update Kube Config"
-          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-            displayName: Replace tokens in **/*
-            inputs:
-              rootDirectory: $(System.DefaultWorkingDirectory)
-              targetFiles: '$(k8sPath)/app.yaml'
-              keepToken: true
-              tokenPrefix: __
-              tokenSuffix: __
-          - bash: kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/app.yaml
-            displayName: "Deploying Spring Application"
-          - bash: kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/priv-pod.yaml
-            displayName: "Deploying Nginx Application"
-          - bash: kubectl get svc -A | grep elb | awk '{print $5}'
-            displayName: URL to Attack
+      steps:
+        - bash: |
+            aws eks update-kubeconfig --name $(clusterName)
+          displayName: "Update Kube Config"
+          env:
+            AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+            AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+          displayName: Replace tokens in **/*
+          inputs:
+            rootDirectory: $(System.DefaultWorkingDirectory)
+            targetFiles: '$(k8sPath)/app.yaml'
+            keepToken: true
+            tokenPrefix: __
+            tokenSuffix: __
+        - bash: kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/app.yaml
+          displayName: "Deploying Spring Application"
+        - bash: kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/priv-pod.yaml
+          displayName: "Deploying Nginx Application"
+        - bash: kubectl get svc -A | grep elb | awk '{print $5}'
+          displayName: URL to Attack
     - stage: defender_deployment
       displayName: Apply Defender (Prisma)
       dependsOn: 
