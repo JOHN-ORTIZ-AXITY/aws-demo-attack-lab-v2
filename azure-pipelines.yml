@@ -296,7 +296,7 @@ stages:
           - bash: aws eks update-kubeconfig --name $(clusterName)
             displayName: "Update Kube Config"
           - bash: |
-              if [[ $(kubectl get ns | grep prismacloud | awk '{print $1}') != 'prismacloud' ]]
+              if [[ $(kubectl get ns | grep twistlock | awk '{print $1}') != 'twistlock' ]]
               then
                 kubectl apply -f $(System.DefaultWorkingDirectory)/$(k8sPath)/daemonset.yaml
               else
